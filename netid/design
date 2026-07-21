@@ -1,0 +1,48 @@
+# Network Device Scanner
+A Rust application that discovers and lists active devices on private networks.
+
+## Features
+
+- Version 1 identifies responding devices on private subnets using lightweight ICMP probing to detect active host
+- Outputs a simple list of IP addresses
+- Runs in a Docker container for easy deployment
+
+## Building
+### Local Build
+```bash
+cargo build --release
+cargo run --release
+```
+
+### Docker Build
+```bash
+docker build -t network-device-scanner .
+```
+
+## Usage
+The scanner needs access to the host network to probe local devices. When running in Docker, use host networking and the required raw socket capability:
+
+```bash
+docker run --rm --network host --cap-add=NET_RAW network-device-scanner
+```
+
+## Requirements
+- Rust 1.70+
+- Docker (for containerized deployment)
+- `ping` available on the runtime image
+
+## Output
+The application prints:
+1. The interfaces it is scanning
+2. Each private subnet it checks
+3. A list of detected active IP addresses
+4. The total number of devices found
+
+## Architecture
+- [src/main.rs](src/main.rs): Core scanning logic and host detection
+- [Cargo.toml](Cargo.toml): Project metadata and dependencies
+- [Dockerfile](Dockerfile): Multi-stage build for the container image
+
+## Dependencies
+- `pnet` for interface discovery
+- `anyhow` for error handling
